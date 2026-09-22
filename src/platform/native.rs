@@ -11,12 +11,11 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
     loop {
         terminal.draw(|frame| app.render(frame))?;
 
-        if event::poll(Duration::from_millis(16))? {
-            if let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event::read()? {
-                if app.handle_key(code) {
-                    break;
-                }
-            }
+        if event::poll(Duration::from_millis(16))?
+            && let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event::read()?
+            && app.handle_key(code)
+        {
+            break;
         }
     }
 

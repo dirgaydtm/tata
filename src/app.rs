@@ -39,9 +39,6 @@ impl App {
     }
 
     pub fn handle_key(&self, key: KeyCode) -> bool {
-        match key {
-            KeyCode::Char('q') | KeyCode::Esc => true,
-            _ => false,
-        }
+        matches!(key, KeyCode::Char('q') | KeyCode::Esc)
     }
 }
