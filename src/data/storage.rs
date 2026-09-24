@@ -1,3 +1,8 @@
+//! Cross-platform persistence for user configuration and test history records.
+//!
+//! Missing storage files or keys safely resolve to `Default` values on startup,
+//! allowing the application to launch cleanly on first run without onboarding prompts.
+
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -123,4 +128,30 @@ fn save(_file: &str, key: &str, raw: &str) -> Result<(), AppError> {
     storage()?
         .set_item(key, raw)
         .map_err(|_| AppError::Storage("could not write localStorage".into()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_record_serde_roundtrip() {
+        let record = TestRecord {
+            id: "test-123".to_owned(),
+            timestamp: 1700000000,
+            language: Language::Rust,
+            raw_wpm: 85.5,
+            net_wpm: 82.0,
+            accuracy: 96.5,
+            duration_seconds: 30.0,
+            total_chars: 250,
+            error_chars: 5,
+        };
+
+        let json = serde_json::to_string(&record).expect("Serialize test record");
+        let deserialized: TestRecord =
+            serde_json::from_str(&json).expect("Deserialize test record");
+
+        assert_eq!(record, deserialized);
+    }
 }

@@ -1,3 +1,8 @@
+//! User configuration and runtime test preferences.
+//!
+//! Selection enums derive `Copy` so preference state flows freely through UI
+//! component trees and event loops without heap allocation or clone overhead.
+
 use serde::{Deserialize, Serialize};
 
 use super::{Language, SnippetLength};
@@ -118,5 +123,25 @@ impl Default for UserConfig {
             theme: ThemeChoice::Catppuccin,
             sound_enabled: false,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn all_theme_choices_generate_valid_themes() {
+        for theme in ThemeChoice::ALL {
+            let _ = theme.to_theme();
+        }
+    }
+
+    #[test]
+    fn user_config_roundtrips_serialization() {
+        let config = UserConfig::default();
+        let json = serde_json::to_string(&config).expect("Serialize config");
+        let parsed: UserConfig = serde_json::from_str(&json).expect("Deserialize config");
+        assert_eq!(config, parsed);
     }
 }

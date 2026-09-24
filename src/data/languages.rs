@@ -1,3 +1,9 @@
+//! Supported programming languages and bundled snippet loader.
+//!
+//! Snippets are inlined at compile time (`include_str!`) so rapid restarts
+//! and mid-session language switches never hitch from disk I/O, while keeping
+//! the WASM build completely self-contained without runtime network fetches.
+
 use fuzzy_matcher::{FuzzyMatcher, skim::SkimMatcherV2};
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumIter, IntoEnumIterator, IntoStaticStr};
@@ -106,5 +112,35 @@ impl Language {
             Self::YoptaScript => include_str!("../../assets/snippets/yoptascript.json"),
         };
         serde_json::from_str(json).expect("bundled snippet JSON is valid")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn every_language_loads_its_bundled_data() {
+        for language in Language::all() {
+            let data = language.snippet_data();
+            assert!(
+                !data.snippets.is_empty(),
+                "Language {language} has no snippets"
+            );
+            for snippet in &data.snippets {
+                assert!(
+                    !snippet.code.trim().is_empty(),
+                    "Language {language} has empty snippet"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn search_languages() {
+        let all_count = Language::all().count();
+        assert_eq!(Language::search("").len(), all_count);
+        assert_eq!(Language::search("rust").first(), Some(&Language::Rust));
+        assert_eq!(Language::search("c++").first(), Some(&Language::Cpp));
     }
 }
