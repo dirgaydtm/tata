@@ -17,7 +17,7 @@ pub struct App {}
 impl App {
     pub fn render(&self, frame: &mut Frame) {
         let block = Block::bordered()
-            .title(" Tata ")
+            .title(" Ratype ")
             .title_alignment(Alignment::Center)
             .border_type(BorderType::Rounded);
 
@@ -27,7 +27,7 @@ impl App {
             "Native Desktop Terminal (via Crossterm)"
         };
 
-        let text = format!("tata v0.1.0 • {platform}");
+        let text = format!("ratype v0.1.0 • {platform}");
 
         let paragraph = Paragraph::new(text)
             .block(block)

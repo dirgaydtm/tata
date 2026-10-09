@@ -13,8 +13,8 @@ use super::{Language, UserConfig};
 
 const CONFIG_FILE: &str = "config.json";
 const HISTORY_FILE: &str = "history.json";
-const CONFIG_KEY: &str = "tata-config";
-const HISTORY_KEY: &str = "tata-history";
+const CONFIG_KEY: &str = "ratype-config";
+const HISTORY_KEY: &str = "ratype-history";
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestRecord {
@@ -89,7 +89,7 @@ pub fn save_history(history: &[TestRecord]) -> Result<(), AppError> {
 fn data_path(file: &str) -> Result<PathBuf, AppError> {
     let dir = dirs::config_dir()
         .ok_or_else(|| AppError::Storage("could not determine config dir".into()))?
-        .join("tata");
+        .join("ratype");
     std::fs::create_dir_all(&dir)?;
     Ok(dir.join(file))
 }
