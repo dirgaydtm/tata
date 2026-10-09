@@ -13,21 +13,34 @@ pub use ratzilla::event::KeyCode;
 
 use ratcn::{
     Theme,
-    runtime::{FocusState, Ratcn},
+    runtime::{FocusState, MouseButton, MouseEvent, MouseKind, Ratcn},
     toast::{Toast, ToasterState},
 };
 use web_time::Instant;
 
 use crate::{
     components::toast::ToasterWidget,
-    data::{Snippet, UserConfig, load_config},
+    data::{Language, Snippet, SnippetLength, TestMode, UserConfig, load_config, save_config},
     engine::Session,
     screens::{self},
     utils::Timer,
 };
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OpenDropdown {
+    Language,
+    Mode,
+    Length,
+    Sound,
+}
+
 #[derive(Debug, Clone)]
 pub enum AppMsg {
+    OpenDropdown(Option<OpenDropdown>),
+    SelectLanguage(Language),
+    SetMode(TestMode),
+    SetLength(SnippetLength),
+    SetSound(bool),
     FocusChanged(FocusState),
 }
 
@@ -41,6 +54,7 @@ pub struct AppState {
     pub snippet: Snippet,
     pub session: Session,
     pub timer: Timer,
+    pub open_dropdown: Option<OpenDropdown>,
     pub focus: FocusState,
     pub record_saved: bool,
     pub toaster: ToasterState<'static>,
@@ -60,6 +74,7 @@ impl Default for AppState {
             snippet,
             config,
             timer: Timer::default(),
+            open_dropdown: None,
             focus: FocusState::default(),
             record_saved: false,
             toaster: ToasterState::new(),
@@ -136,10 +151,35 @@ impl AppState {
         if ctrl && matches!(key, KeyCode::Char('q' | 'Q' | 'c' | 'C')) {
             return true;
         }
+        if self.open_dropdown.take().is_some() {
+            return false;
+        }
 
         screens::typing::handle_key(self, key, ctrl);
         self.update_completion();
         false
+    }
+
+    pub fn apply(&mut self, msg: AppMsg) {
+        self.open_dropdown = None;
+        match msg {
+            AppMsg::OpenDropdown(d) => self.open_dropdown = d,
+            AppMsg::SelectLanguage(lang) => {
+                self.config.language = lang;
+                self.restart(false);
+            }
+            AppMsg::SetMode(mode) => {
+                self.config.test_mode = mode;
+                self.restart(false);
+            }
+            AppMsg::SetLength(len) => {
+                self.config.snippet_length = len;
+                self.restart(false);
+            }
+            AppMsg::SetSound(enabled) => self.config.sound_enabled = enabled,
+            AppMsg::FocusChanged(focus) => self.focus = focus,
+        }
+        let _ = save_config(&self.config);
     }
 }
 
@@ -186,6 +226,22 @@ impl App {
         let now = state.created_at.elapsed();
         let toaster = ToasterWidget::new(&state.toaster, now).themed(&theme);
         frame.render_widget(toaster, inner_area);
+    }
+
+    pub fn handle_click(&self, col: u16, row: u16) {
+        let mouse_event = MouseEvent {
+            kind: MouseKind::Click(MouseButton::Left),
+            column: col,
+            row,
+            modifiers: ratcn::runtime::Modifiers::NONE,
+        };
+        let res = self.ratcn.borrow_mut().handle_event(
+            ratcn::runtime::Event::Mouse(mouse_event),
+            &self.state.borrow(),
+        );
+        if let ratcn::runtime::EventResult::Emit(msg) = res {
+            self.state.borrow_mut().apply(msg);
+        }
     }
 
     pub fn handle_key(&self, key: KeyCode, ctrl: bool) -> bool {
