@@ -60,6 +60,16 @@ impl AppState {
     pub fn theme(&self) -> Theme {
         self.config.theme.to_theme()
     }
+
+    /// returns true when the app should quit
+    pub fn on_key(&mut self, key: KeyCode, ctrl: bool) -> bool {
+        if ctrl && matches!(key, KeyCode::Char('q' | 'Q' | 'c' | 'C')) {
+            return true;
+        }
+
+        screens::typing::handle_key(self, key, ctrl);
+        false
+    }
 }
 
 impl Default for App {
@@ -98,7 +108,7 @@ impl App {
             });
     }
 
-    pub fn handle_key(&self, key: KeyCode) -> bool {
-        matches!(key, KeyCode::Char('q') | KeyCode::Esc)
+    pub fn handle_key(&self, key: KeyCode, ctrl: bool) -> bool {
+        self.state.borrow_mut().on_key(key, ctrl)
     }
 }

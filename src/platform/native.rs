@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crossterm::event::{self, Event, KeyEvent, KeyEventKind};
+use crossterm::event::{self, Event, KeyEvent, KeyEventKind, KeyModifiers};
 
 use crate::app::App;
 
@@ -14,10 +14,11 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
         if event::poll(Duration::from_millis(16))?
             && let Event::Key(KeyEvent {
                 code,
+                modifiers,
                 kind: KeyEventKind::Press,
                 ..
             }) = event::read()?
-            && app.handle_key(code)
+            && app.handle_key(code, modifiers.contains(KeyModifiers::CONTROL))
         {
             break;
         }

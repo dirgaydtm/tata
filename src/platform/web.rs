@@ -11,7 +11,7 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
 
     let event_state = Rc::clone(&state);
     let _ = terminal.on_key_event(move |event| {
-        event_state.handle_key(event.code);
+        event_state.handle_key(event.code, event.ctrl);
     });
 
     let render_state = Rc::clone(&state);
