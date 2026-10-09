@@ -20,6 +20,7 @@ use crate::{
     data::{Snippet, UserConfig, load_config},
     engine::Session,
     screens::{self},
+    utils::Timer,
 };
 
 #[derive(Debug, Clone)]
@@ -36,6 +37,7 @@ pub struct AppState {
     pub config: UserConfig,
     pub snippet: Snippet,
     pub session: Session,
+    pub timer: Timer,
     pub focus: FocusState,
 }
 
@@ -51,6 +53,7 @@ impl Default for AppState {
             session: Session::new(&snippet.code),
             snippet,
             config,
+            timer: Timer::default(),
             focus: FocusState::default(),
         }
     }
@@ -59,6 +62,18 @@ impl Default for AppState {
 impl AppState {
     pub fn theme(&self) -> Theme {
         self.config.theme.to_theme()
+    }
+
+    pub fn ensure_started(&mut self) {
+        if self.session.has_started() && !self.timer.is_running() {
+            self.timer.start();
+        }
+    }
+
+    pub fn tick(&mut self) {
+        if self.timer.is_running() && self.session.has_started() {
+            self.session.stats.tick(self.timer.seconds());
+        }
     }
 
     /// returns true when the app should quit
@@ -82,6 +97,10 @@ impl Default for App {
 }
 
 impl App {
+    pub fn tick(&self) {
+        self.state.borrow_mut().tick();
+    }
+
     pub fn render(&self, frame: &mut Frame) {
         let area = frame.area();
         let theme = self.state.borrow().theme();

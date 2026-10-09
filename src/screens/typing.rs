@@ -1,5 +1,6 @@
 mod code_view;
 mod input;
+mod telemetry;
 
 use ratatui::layout::{Constraint, Layout, Rect};
 
@@ -9,7 +10,7 @@ pub use input::handle_key;
 
 pub fn declare(ctx: &mut Ctx<'_>, area: Rect) {
     let theme = ctx.state().theme();
-    let [_, _, container, _] = Layout::vertical([
+    let [_, telemetry_area, container, _] = Layout::vertical([
         Constraint::Length(2),
         Constraint::Length(2),
         Constraint::Fill(1),
@@ -19,5 +20,6 @@ pub fn declare(ctx: &mut Ctx<'_>, area: Rect) {
     .margin(3)
     .areas(area);
 
+    telemetry::draw(ctx, telemetry_area, theme);
     code_view::draw(ctx, container, theme);
 }

@@ -4,6 +4,7 @@ pub mod data;
 pub mod engine;
 pub mod platform;
 pub mod screens;
+pub mod utils;
 
 use app::App;
 

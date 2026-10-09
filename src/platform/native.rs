@@ -9,6 +9,7 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
     let mut terminal = ratatui::init();
 
     loop {
+        app.tick();
         terminal.draw(|frame| app.render(frame))?;
 
         if event::poll(Duration::from_millis(16))?
