@@ -1,3 +1,10 @@
+//! Typing metrics: raw and net CPM, accuracy, and consistency.
+//!
+//! Speed is measured in characters per minute because a "word" in code is a fuzzy
+//! idea. Net CPM only counts characters that are correct right now, so erasing and
+//! retyping never inflates the score, while raw CPM and accuracy keep counting every
+//! keystroke that was pressed.
+
 const SECONDS_PER_MINUTE: f64 = 60.0;
 
 #[derive(Debug, Clone, Default)]
@@ -90,5 +97,73 @@ fn rate(chars: usize, elapsed_seconds: f64) -> f64 {
         0.0
     } else {
         chars as f64 / (elapsed_seconds / SECONDS_PER_MINUTE)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calculates_standard_typing_metrics() {
+        let mut stats = TypingStats::default();
+        for _ in 0..25 {
+            stats.record(true);
+        }
+        assert_eq!(stats.raw_cpm(60.0), 25.0);
+        assert_eq!(stats.net_cpm(60.0), 25.0);
+        assert_eq!(stats.accuracy(), 100.0);
+    }
+
+    #[test]
+    fn samples_measure_each_interval_not_a_running_average() {
+        let mut stats = TypingStats::default();
+        for _ in 0..10 {
+            stats.record(true);
+        }
+        stats.tick(0.5);
+        stats.tick(1.0);
+        for _ in 0..5 {
+            stats.record(true);
+        }
+        stats.tick(1.5);
+        stats.tick(2.0);
+        assert_eq!(stats.samples(), &[600.0, 300.0]);
+    }
+
+    #[test]
+    fn net_cpm_counts_only_characters_correct_right_now() {
+        let mut stats = TypingStats::default();
+        for _ in 0..10 {
+            stats.record(true);
+        }
+        stats.record(false);
+        assert_eq!(stats.raw_cpm(60.0), 11.0);
+        assert_eq!(stats.net_cpm(60.0), 10.0);
+
+        stats.erase(true);
+        assert_eq!(stats.net_cpm(60.0), 9.0);
+        assert_eq!(stats.raw_cpm(60.0), 11.0);
+    }
+
+    #[test]
+    fn consistency_drops_with_varied_samples() {
+        let mut stats = TypingStats::default();
+        stats.record(true);
+        stats.tick(1.0);
+        for _ in 0..3 {
+            stats.record(true);
+        }
+        stats.tick(2.0);
+        // samples are 60 and 180 CPM: mean 120, sigma 60, so 100 - 50%
+        assert!((stats.consistency() - 50.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn non_positive_elapsed_time_yields_zero_cpm() {
+        let mut stats = TypingStats::default();
+        stats.record(true);
+        assert_eq!(stats.raw_cpm(0.0), 0.0);
+        assert_eq!(stats.net_cpm(0.0), 0.0);
     }
 }
