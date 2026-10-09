@@ -608,4 +608,3 @@ const fn clamp(start: u16, size: u16, low: u16, high: u16) -> u16 {
         start
     }
 }
-

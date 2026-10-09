@@ -1,8 +1,8 @@
 use ratatui::{
+    Frame,
     layout::Alignment,
     style::{Color, Stylize},
     widgets::{Block, BorderType, Paragraph},
-    Frame,
 };
 
 #[cfg(target_arch = "wasm32")]

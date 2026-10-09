@@ -432,4 +432,3 @@ impl<S: 'static, M: 'static> MeasuredComponent<S, M> for Cycle<S, M> {
         Size::new(self.width(), 1)
     }
 }
-

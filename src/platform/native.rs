@@ -12,7 +12,11 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
         terminal.draw(|frame| app.render(frame))?;
 
         if event::poll(Duration::from_millis(16))?
-            && let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event::read()?
+            && let Event::Key(KeyEvent {
+                code,
+                kind: KeyEventKind::Press,
+                ..
+            }) = event::read()?
             && app.handle_key(code)
         {
             break;

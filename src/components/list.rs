@@ -1042,4 +1042,3 @@ fn default_item_line<T>(
         glyphs,
     ))
 }
-

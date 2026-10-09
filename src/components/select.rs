@@ -1254,4 +1254,3 @@ fn panel_layout(
 const fn frame_area() -> Rect {
     Rect::new(0, 0, 20, 8)
 }
-

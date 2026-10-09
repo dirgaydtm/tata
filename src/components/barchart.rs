@@ -354,4 +354,3 @@ impl<'a> Widget for BarChartWidget<'a> {
         chart.render(area, buf);
     }
 }
-

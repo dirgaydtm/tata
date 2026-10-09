@@ -751,4 +751,3 @@ impl<S: 'static, M: 'static> Component<S, M> for Dialog<S, M> {
         }
     }
 }
-

@@ -361,4 +361,3 @@ impl<S: 'static, M: 'static> Component<S, M> for ScrollArea<S, M> {
         }
     }
 }
-

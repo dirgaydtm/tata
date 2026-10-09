@@ -1085,4 +1085,3 @@ fn tab_rects(area: Rect, labels: &[&str], size: TabsSize) -> Vec<Rect> {
         .map(|(_, rect)| rect)
         .collect()
 }
-

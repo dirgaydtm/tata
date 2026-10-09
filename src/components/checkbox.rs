@@ -543,4 +543,3 @@ impl<S: 'static, M: 'static> MeasuredComponent<S, M> for Checkbox<S, M> {
         Size::new(self.width(), 1)
     }
 }
-

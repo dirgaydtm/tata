@@ -761,4 +761,3 @@ impl<S, M> MeasuredComponent<S, M> for Button<M> {
         Size::new(self.width(), self.size.height())
     }
 }
-

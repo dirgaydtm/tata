@@ -1,8 +1,8 @@
 // This file is managed by cargo ratcn.
 #![allow(dead_code)]
 
-pub mod button;
 pub mod barchart;
+pub mod button;
 pub mod checkbox;
 pub mod cycle;
 pub mod dialog;

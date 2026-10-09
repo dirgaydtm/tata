@@ -469,4 +469,3 @@ const fn toast_icon(kind: ToastKind) -> &'static str {
         ToastKind::Loading => "..",
     }
 }
-
