@@ -98,6 +98,16 @@ impl Session {
         }
     }
 
+    pub fn backspace(&mut self) {
+        if self.index <= self.line_start || self.is_complete() {
+            return;
+        }
+        self.index -= 1;
+        self.stats
+            .erase(self.statuses[self.index] == CharStatus::Correct);
+        self.statuses[self.index] = CharStatus::Untyped;
+    }
+
     /// ends the test early (time ran out). that's why "complete" is stored and not worked
     /// out from the cursor, `go_to` relies on it
     pub fn complete(&mut self) {
