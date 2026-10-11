@@ -6,6 +6,7 @@ use crate::{
 pub fn handle_key(state: &mut AppState, key: KeyCode, ctrl: bool) {
     match (key, ctrl) {
         (KeyCode::Tab, _) => state.restart(false),
+        (KeyCode::F(2), _) => state.next_theme(),
         (KeyCode::Backspace, _) => press(state, Session::backspace),
         (KeyCode::Enter, _) => press(state, |session| session.type_char('\n')),
         (KeyCode::Char(c), false) => press(state, |session| session.type_char(c)),

@@ -21,10 +21,13 @@ use web_time::Instant;
 use crate::{
     audio::play_click,
     components::toast::ToasterWidget,
-    data::{Language, Snippet, SnippetLength, TestMode, UserConfig, load_config, save_config},
+    data::{
+        Language, Snippet, SnippetLength, TestMode, ThemeChoice, UserConfig, load_config,
+        save_config,
+    },
     engine::Session,
     screens::{self},
-    utils::Timer,
+    utils::{Timer, cycle},
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -98,6 +101,12 @@ impl AppState {
         if self.config.sound_enabled {
             play_click();
         }
+    }
+
+    pub fn next_theme(&mut self) {
+        cycle(&mut self.config.theme, &ThemeChoice::ALL, true);
+        let _ = save_config(&self.config);
+        self.notify(Toast::info("Theme Changed").with_description(self.config.theme.label()));
     }
 
     pub fn ensure_started(&mut self) {
