@@ -26,7 +26,7 @@ use crate::{
         load_config, load_history, save_config, save_history,
     },
     engine::Session,
-    screens::{self, CurrentScreen},
+    screens::{self, CurrentScreen, settings::SettingsView},
     utils::{Timer, cycle, theme_for},
 };
 
@@ -45,6 +45,7 @@ pub enum AppMsg {
     SetMode(TestMode),
     SetLength(SnippetLength),
     SetSound(bool),
+    SetScreen(CurrentScreen),
     Restart(bool),
     FocusChanged(FocusState),
 }
@@ -61,6 +62,7 @@ pub struct AppState {
     pub session: Session,
     pub timer: Timer,
     pub screen: CurrentScreen,
+    pub settings_view: SettingsView,
     pub open_dropdown: Option<OpenDropdown>,
     pub focus: FocusState,
     pub record_saved: bool,
@@ -83,6 +85,7 @@ impl Default for AppState {
             config,
             timer: Timer::default(),
             screen: CurrentScreen::Typing,
+            settings_view: SettingsView::default(),
             open_dropdown: None,
             focus: FocusState::default(),
             record_saved: false,
@@ -100,6 +103,19 @@ impl AppState {
     pub fn notify(&mut self, toast: Toast<'static>) {
         let now = self.created_at.elapsed();
         self.toaster.push(toast, now);
+    }
+
+    /// switches screens and keeps the timer in sync. coming back to typing after a finished
+    /// test starts a fresh one instead of resuming it
+    pub fn go_to(&mut self, screen: CurrentScreen) {
+        if screen != CurrentScreen::Typing {
+            self.timer.pause();
+        } else if self.session.is_complete() {
+            self.restart(false);
+        } else {
+            self.timer.resume();
+        }
+        self.screen = screen;
     }
 
     pub fn click(&self) {
@@ -208,6 +224,7 @@ impl AppState {
         match self.screen {
             CurrentScreen::Typing => screens::typing::handle_key(self, key, ctrl),
             CurrentScreen::Result => screens::result::handle_key(self, key),
+            CurrentScreen::Settings => screens::settings::handle_key(self, key),
         }
 
         if self.screen == CurrentScreen::Typing {
@@ -222,6 +239,7 @@ impl AppState {
             AppMsg::OpenDropdown(d) => self.open_dropdown = d,
             AppMsg::SelectLanguage(lang) => {
                 self.config.language = lang;
+                self.settings_view.query.clear();
                 self.restart(false);
             }
             AppMsg::SetMode(mode) => {
@@ -237,6 +255,10 @@ impl AppState {
                 }
             }
             AppMsg::SetSound(enabled) => self.config.sound_enabled = enabled,
+            AppMsg::SetScreen(screen) => {
+                self.settings_view.query.clear();
+                self.go_to(screen);
+            }
             AppMsg::Restart(same) => self.restart(same),
             AppMsg::FocusChanged(focus) => self.focus = focus,
         }
@@ -287,6 +309,7 @@ impl App {
                 |ctx| match ctx.state().screen {
                     CurrentScreen::Typing => screens::typing::declare(ctx, inner_area),
                     CurrentScreen::Result => screens::result::declare(ctx, inner_area),
+                    CurrentScreen::Settings => screens::settings::declare(ctx, inner_area),
                 },
             );
 

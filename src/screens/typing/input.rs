@@ -1,10 +1,12 @@
 use crate::{
     app::{AppState, KeyCode},
     engine::Session,
+    screens::CurrentScreen,
 };
 
 pub fn handle_key(state: &mut AppState, key: KeyCode, ctrl: bool) {
     match (key, ctrl) {
+        (KeyCode::Esc, _) => state.go_to(CurrentScreen::Settings),
         (KeyCode::Tab, _) => state.restart(false),
         (KeyCode::F(2), _) => state.next_theme(),
         (KeyCode::Backspace, _) => press(state, Session::backspace),

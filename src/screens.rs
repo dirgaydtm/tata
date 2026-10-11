@@ -5,6 +5,7 @@ use crate::app::{AppMsg, AppState};
 mod layout;
 
 pub mod result;
+pub mod settings;
 pub mod typing;
 
 type Ctx<'a> = DeclareCtx<'a, AppState, AppMsg>;
@@ -14,4 +15,5 @@ pub enum CurrentScreen {
     #[default]
     Typing,
     Result,
+    Settings,
 }
