@@ -27,7 +27,7 @@ use crate::{
     },
     engine::Session,
     screens::{self},
-    utils::{Timer, cycle},
+    utils::{Timer, cycle, theme_for},
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -89,7 +89,7 @@ impl Default for AppState {
 
 impl AppState {
     pub fn theme(&self) -> Theme {
-        self.config.theme.to_theme()
+        theme_for(self.config.theme)
     }
 
     pub fn notify(&mut self, toast: Toast<'static>) {

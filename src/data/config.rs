@@ -88,17 +88,6 @@ impl ThemeChoice {
     pub fn label(self) -> &'static str {
         self.into()
     }
-
-    pub fn to_theme(self) -> ratcn::Theme {
-        match self {
-            Self::Catppuccin => ratcn::Theme::catppuccin(),
-            Self::Nord => ratcn::Theme::nord(),
-            Self::TokyoNight => ratcn::Theme::tokyo_night(),
-            Self::Gruvbox => ratcn::Theme::gruvbox(),
-            Self::Terminal => ratcn::Theme::terminal(),
-            Self::Dark => ratcn::Theme::default_dark(),
-        }
-    }
 }
 
 pub const SOUND_OPTIONS: [(bool, &str); 2] = [(true, "Sound On"), (false, "Sound Off")];
@@ -129,13 +118,6 @@ impl Default for UserConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn all_theme_choices_generate_valid_themes() {
-        for theme in ThemeChoice::ALL {
-            let _ = theme.to_theme();
-        }
-    }
 
     #[test]
     fn user_config_roundtrips_serialization() {
