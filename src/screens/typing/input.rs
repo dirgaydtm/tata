@@ -14,6 +14,7 @@ pub fn handle_key(state: &mut AppState, key: KeyCode, ctrl: bool) {
 }
 
 fn press(state: &mut AppState, input: impl FnOnce(&mut Session)) {
+    state.click();
     input(&mut state.session);
     state.ensure_started();
 }

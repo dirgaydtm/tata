@@ -19,6 +19,7 @@ use ratcn::{
 use web_time::Instant;
 
 use crate::{
+    audio::play_click,
     components::toast::ToasterWidget,
     data::{Language, Snippet, SnippetLength, TestMode, UserConfig, load_config, save_config},
     engine::Session,
@@ -91,6 +92,12 @@ impl AppState {
     pub fn notify(&mut self, toast: Toast<'static>) {
         let now = self.created_at.elapsed();
         self.toaster.push(toast, now);
+    }
+
+    pub fn click(&self) {
+        if self.config.sound_enabled {
+            play_click();
+        }
     }
 
     pub fn ensure_started(&mut self) {
