@@ -26,7 +26,7 @@ use crate::{
         save_config,
     },
     engine::Session,
-    screens::{self},
+    screens::{self, CurrentScreen},
     utils::{Timer, cycle, theme_for},
 };
 
@@ -45,6 +45,7 @@ pub enum AppMsg {
     SetMode(TestMode),
     SetLength(SnippetLength),
     SetSound(bool),
+    Restart(bool),
     FocusChanged(FocusState),
 }
 
@@ -58,6 +59,7 @@ pub struct AppState {
     pub snippet: Snippet,
     pub session: Session,
     pub timer: Timer,
+    pub screen: CurrentScreen,
     pub open_dropdown: Option<OpenDropdown>,
     pub focus: FocusState,
     pub record_saved: bool,
@@ -78,6 +80,7 @@ impl Default for AppState {
             snippet,
             config,
             timer: Timer::default(),
+            screen: CurrentScreen::Typing,
             open_dropdown: None,
             focus: FocusState::default(),
             record_saved: false,
@@ -118,10 +121,12 @@ impl AppState {
     pub fn tick(&mut self) {
         let now = self.created_at.elapsed();
         let _ = self.toaster.prune_expired(now);
-        if self.timer.is_running() && self.session.has_started() {
-            self.session.stats.tick(self.timer.seconds());
+        if self.screen == CurrentScreen::Typing {
+            if self.timer.is_running() && self.session.has_started() {
+                self.session.stats.tick(self.timer.seconds());
+            }
+            self.update_completion();
         }
-        self.update_completion();
     }
 
     pub fn update_completion(&mut self) {
@@ -145,6 +150,7 @@ impl AppState {
             self.record_saved = true;
             self.session.complete();
             self.timer.pause();
+            self.screen = CurrentScreen::Result;
         }
     }
 
@@ -160,6 +166,9 @@ impl AppState {
         self.session = Session::new(&self.snippet.code);
         self.timer.reset();
         self.record_saved = false;
+        if self.screen == CurrentScreen::Result {
+            self.screen = CurrentScreen::Typing;
+        }
     }
 
     /// returns true when the app should quit
@@ -170,9 +179,18 @@ impl AppState {
         if self.open_dropdown.take().is_some() {
             return false;
         }
+        if self.screen == CurrentScreen::Result && matches!(key, KeyCode::Char('q' | 'Q')) {
+            return true;
+        }
 
-        screens::typing::handle_key(self, key, ctrl);
-        self.update_completion();
+        match self.screen {
+            CurrentScreen::Typing => screens::typing::handle_key(self, key, ctrl),
+            CurrentScreen::Result => screens::result::handle_key(self, key),
+        }
+
+        if self.screen == CurrentScreen::Typing {
+            self.update_completion();
+        }
         false
     }
 
@@ -186,13 +204,18 @@ impl AppState {
             }
             AppMsg::SetMode(mode) => {
                 self.config.test_mode = mode;
-                self.restart(false);
+                if self.screen == CurrentScreen::Typing {
+                    self.restart(false);
+                }
             }
             AppMsg::SetLength(len) => {
                 self.config.snippet_length = len;
-                self.restart(false);
+                if self.screen == CurrentScreen::Typing {
+                    self.restart(false);
+                }
             }
             AppMsg::SetSound(enabled) => self.config.sound_enabled = enabled,
+            AppMsg::Restart(same) => self.restart(same),
             AppMsg::FocusChanged(focus) => self.focus = focus,
         }
         let _ = save_config(&self.config);
@@ -234,9 +257,16 @@ impl App {
 
         self.ratcn
             .borrow_mut()
-            .render(frame, inner_area, &self.state.borrow(), &theme, |ctx| {
-                screens::typing::declare(ctx, inner_area)
-            });
+            .render(
+                frame,
+                inner_area,
+                &self.state.borrow(),
+                &theme,
+                |ctx| match ctx.state().screen {
+                    CurrentScreen::Typing => screens::typing::declare(ctx, inner_area),
+                    CurrentScreen::Result => screens::result::declare(ctx, inner_area),
+                },
+            );
 
         let state = self.state.borrow();
         let now = state.created_at.elapsed();
