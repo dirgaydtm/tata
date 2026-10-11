@@ -1,7 +1,9 @@
+use super::view::SETTINGS_TABS;
 use crate::{
     app::{AppState, KeyCode},
-    data::{Language, save_config},
+    data::{CaretStyle, Language, SnippetLength, TestMode, ThemeChoice, save_config},
     screens::CurrentScreen,
+    utils::cycle,
 };
 
 pub fn handle_key(state: &mut AppState, key: KeyCode) {
@@ -11,7 +13,27 @@ pub fn handle_key(state: &mut AppState, key: KeyCode) {
             state.settings_view.tab = 0;
             state.go_to(CurrentScreen::Typing);
         }
-        _ => language_key(state, key),
+        KeyCode::Tab => state.settings_view.tab = (state.settings_view.tab + 1) % SETTINGS_TABS,
+        _ if state.settings_view.tab == 0 => language_key(state, key),
+        KeyCode::Right | KeyCode::Down | KeyCode::Char(' ') | KeyCode::Left | KeyCode::Up => {
+            let fwd = matches!(key, KeyCode::Right | KeyCode::Down | KeyCode::Char(' '));
+            match state.settings_view.tab {
+                1 => {
+                    cycle(&mut state.config.test_mode, &TestMode::ALL, fwd);
+                    state.restart(false);
+                }
+                2 => {
+                    cycle(&mut state.config.snippet_length, &SnippetLength::ALL, fwd);
+                    state.restart(false);
+                }
+                3 => cycle(&mut state.config.caret_style, &CaretStyle::ALL, fwd),
+                4 => state.config.sound_enabled = !state.config.sound_enabled,
+                5 => cycle(&mut state.config.theme, &ThemeChoice::ALL, fwd),
+                _ => {}
+            }
+            let _ = save_config(&state.config);
+        }
+        _ => {}
     }
 }
 

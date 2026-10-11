@@ -1,5 +1,6 @@
 mod input;
 mod language_picker;
+mod option_tabs;
 mod view;
 
 use ratatui::{
@@ -19,8 +20,9 @@ pub fn declare(ctx: &mut Ctx<'_>, area: Rect) {
 
     ctx.paint_widget(Paragraph::new("Settings".fg(theme.primary).bold()), header);
 
-    let [left_col, _] = Layout::horizontal([Constraint::Length(25), Constraint::Fill(1)])
+    let [left_col, right_col] = Layout::horizontal([Constraint::Length(25), Constraint::Fill(1)])
         .spacing(2)
         .areas(main_content);
     language_picker::draw(ctx, left_col, theme);
+    option_tabs::draw(ctx, right_col);
 }

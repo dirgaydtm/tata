@@ -22,8 +22,8 @@ use crate::{
     audio::play_click,
     components::toast::ToasterWidget,
     data::{
-        Language, Snippet, SnippetLength, TestMode, TestRecord, ThemeChoice, UserConfig,
-        load_config, load_history, save_config, save_history,
+        CaretStyle, Language, Snippet, SnippetLength, TestMode, TestRecord, ThemeChoice,
+        UserConfig, load_config, load_history, save_config, save_history,
     },
     engine::Session,
     screens::{self, CurrentScreen, settings::SettingsView},
@@ -44,6 +44,8 @@ pub enum AppMsg {
     SelectLanguage(Language),
     SetMode(TestMode),
     SetLength(SnippetLength),
+    SetCaret(CaretStyle),
+    SetTheme(ThemeChoice),
     SetSound(bool),
     SetScreen(CurrentScreen),
     Restart(bool),
@@ -254,6 +256,8 @@ impl AppState {
                     self.restart(false);
                 }
             }
+            AppMsg::SetCaret(caret) => self.config.caret_style = caret,
+            AppMsg::SetTheme(theme) => self.config.theme = theme,
             AppMsg::SetSound(enabled) => self.config.sound_enabled = enabled,
             AppMsg::SetScreen(screen) => {
                 self.settings_view.query.clear();
