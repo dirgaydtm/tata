@@ -22,8 +22,8 @@ use crate::{
     audio::play_click,
     components::toast::ToasterWidget,
     data::{
-        Language, Snippet, SnippetLength, TestMode, ThemeChoice, UserConfig, load_config,
-        save_config,
+        Language, Snippet, SnippetLength, TestMode, TestRecord, ThemeChoice, UserConfig,
+        load_config, load_history, save_config, save_history,
     },
     engine::Session,
     screens::{self, CurrentScreen},
@@ -56,6 +56,7 @@ pub struct App {
 
 pub struct AppState {
     pub config: UserConfig,
+    pub history: Vec<TestRecord>,
     pub snippet: Snippet,
     pub session: Session,
     pub timer: Timer,
@@ -76,6 +77,7 @@ impl Default for AppState {
             .random(config.snippet_length)
             .unwrap_or_else(|| config.language.snippet_data().snippets[0].clone());
         Self {
+            history: load_history().unwrap_or_default(),
             session: Session::new(&snippet.code),
             snippet,
             config,
@@ -150,6 +152,7 @@ impl AppState {
             self.record_saved = true;
             self.session.complete();
             self.timer.pause();
+            self.save_record();
             self.screen = CurrentScreen::Result;
         }
     }
@@ -168,6 +171,25 @@ impl AppState {
         self.record_saved = false;
         if self.screen == CurrentScreen::Result {
             self.screen = CurrentScreen::Typing;
+        }
+    }
+
+    pub fn save_record(&mut self) {
+        let elapsed = self.timer.seconds();
+        if elapsed > 0.0 {
+            let timestamp = time::OffsetDateTime::now_utc().unix_timestamp();
+            self.history.push(TestRecord {
+                id: format!("{}-{}", timestamp, self.snippet.id),
+                timestamp,
+                language: self.config.language,
+                raw_cpm: self.session.stats.raw_cpm(elapsed),
+                net_cpm: self.session.stats.net_cpm(elapsed),
+                accuracy: self.session.stats.accuracy(),
+                duration_seconds: elapsed,
+                total_chars: self.session.code().len(),
+                error_chars: self.session.stats.uncorrected_errors(),
+            });
+            let _ = save_history(&self.history);
         }
     }
 
