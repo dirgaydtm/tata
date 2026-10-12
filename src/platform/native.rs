@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{error::Error, time::Duration};
 
 use crossterm::{
     event::{
@@ -7,14 +7,23 @@ use crossterm::{
     },
     execute,
 };
+use ratatui::DefaultTerminal;
 
 use crate::app::App;
 
-pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run(app: App) -> Result<(), Box<dyn Error>> {
     color_eyre::install()?;
     let mut terminal = ratatui::init();
     let _ = execute!(std::io::stdout(), EnableMouseCapture);
 
+    let result = event_loop(&mut terminal, &app);
+
+    let _ = execute!(std::io::stdout(), DisableMouseCapture);
+    ratatui::restore();
+    result
+}
+
+fn event_loop(terminal: &mut DefaultTerminal, app: &App) -> Result<(), Box<dyn Error>> {
     loop {
         app.tick();
         terminal.draw(|frame| app.render(frame))?;
@@ -28,7 +37,7 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
                     ..
                 }) => {
                     if app.handle_key(code, modifiers.contains(KeyModifiers::CONTROL)) {
-                        break;
+                        return Ok(());
                     }
                 }
                 Event::Mouse(MouseEvent {
@@ -36,15 +45,9 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
                     column,
                     row,
                     ..
-                }) => {
-                    app.handle_click(column, row);
-                }
+                }) => app.handle_click(column, row),
                 _ => {}
             }
         }
     }
-
-    let _ = execute!(std::io::stdout(), DisableMouseCapture);
-    ratatui::restore();
-    Ok(())
 }

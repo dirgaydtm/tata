@@ -24,10 +24,9 @@ pub fn run(app: App) -> Result<(), Box<dyn std::error::Error>> {
         }
     });
 
-    let render_state = Rc::clone(&state);
     terminal.draw_web(move |frame| {
-        render_state.tick();
-        render_state.render(frame);
+        state.tick();
+        state.render(frame);
     });
 
     Ok(())
