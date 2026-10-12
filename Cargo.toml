@@ -14,9 +14,8 @@ web-time = "1.1"
 fastrand = "2.5"
 strum = { version = "0.28", features = ["derive"] }
 unicode-width = "0.2"
-time = { version = "0.3", features = ["formatting", "serde", "wasm-bindgen"] }
+time = { version = "0.3", features = ["wasm-bindgen"] }
 catppuccin = "2.8"
-logos = "0.16"
 tachyonfx = "0.25"
 fuzzy-matcher = "0.3"
 tui-big-text = "0.8"
