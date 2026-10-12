@@ -7,6 +7,7 @@ use crate::{
 pub fn handle_key(state: &mut AppState, key: KeyCode, ctrl: bool) {
     match (key, ctrl) {
         (KeyCode::Esc, _) => state.go_to(CurrentScreen::Settings),
+        (KeyCode::F(3), _) => state.go_to(CurrentScreen::History),
         (KeyCode::Tab, _) => state.restart(false),
         (KeyCode::F(2), _) => state.next_theme(),
         (KeyCode::Backspace, _) => press(state, Session::backspace),

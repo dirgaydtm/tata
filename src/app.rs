@@ -26,7 +26,7 @@ use crate::{
         UserConfig, load_config, load_history, save_config, save_history,
     },
     engine::Session,
-    screens::{self, CurrentScreen, settings::SettingsView},
+    screens::{self, CurrentScreen, history::HistoryView, settings::SettingsView},
     utils::{Timer, cycle, theme_for},
 };
 
@@ -47,6 +47,7 @@ pub enum AppMsg {
     SetCaret(CaretStyle),
     SetTheme(ThemeChoice),
     SetSound(bool),
+    SetHistoryFilter(Option<Language>),
     SetScreen(CurrentScreen),
     Restart(bool),
     FocusChanged(FocusState),
@@ -65,6 +66,7 @@ pub struct AppState {
     pub timer: Timer,
     pub screen: CurrentScreen,
     pub settings_view: SettingsView,
+    pub history_view: HistoryView,
     pub open_dropdown: Option<OpenDropdown>,
     pub focus: FocusState,
     pub record_saved: bool,
@@ -88,6 +90,7 @@ impl Default for AppState {
             timer: Timer::default(),
             screen: CurrentScreen::Typing,
             settings_view: SettingsView::default(),
+            history_view: HistoryView::default(),
             open_dropdown: None,
             focus: FocusState::default(),
             record_saved: false,
@@ -219,7 +222,9 @@ impl AppState {
         if self.open_dropdown.take().is_some() {
             return false;
         }
-        if self.screen == CurrentScreen::Result && matches!(key, KeyCode::Char('q' | 'Q')) {
+        if matches!(self.screen, CurrentScreen::Result | CurrentScreen::History)
+            && matches!(key, KeyCode::Char('q' | 'Q'))
+        {
             return true;
         }
 
@@ -227,6 +232,7 @@ impl AppState {
             CurrentScreen::Typing => screens::typing::handle_key(self, key, ctrl),
             CurrentScreen::Result => screens::result::handle_key(self, key),
             CurrentScreen::Settings => screens::settings::handle_key(self, key),
+            CurrentScreen::History => screens::history::handle_key(self, key),
         }
 
         if self.screen == CurrentScreen::Typing {
@@ -259,6 +265,10 @@ impl AppState {
             AppMsg::SetCaret(caret) => self.config.caret_style = caret,
             AppMsg::SetTheme(theme) => self.config.theme = theme,
             AppMsg::SetSound(enabled) => self.config.sound_enabled = enabled,
+            AppMsg::SetHistoryFilter(filter) => {
+                self.history_view.filter = filter;
+                self.history_view.scroll = 0;
+            }
             AppMsg::SetScreen(screen) => {
                 self.settings_view.query.clear();
                 self.go_to(screen);
@@ -314,6 +324,7 @@ impl App {
                     CurrentScreen::Typing => screens::typing::declare(ctx, inner_area),
                     CurrentScreen::Result => screens::result::declare(ctx, inner_area),
                     CurrentScreen::Settings => screens::settings::declare(ctx, inner_area),
+                    CurrentScreen::History => screens::history::declare(ctx, inner_area),
                 },
             );
 

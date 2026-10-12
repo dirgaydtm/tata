@@ -4,6 +4,7 @@ use crate::app::{AppMsg, AppState};
 
 mod layout;
 
+pub mod history;
 pub mod result;
 pub mod settings;
 pub mod typing;
@@ -16,4 +17,5 @@ pub enum CurrentScreen {
     Typing,
     Result,
     Settings,
+    History,
 }
