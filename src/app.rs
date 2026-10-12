@@ -50,6 +50,7 @@ pub enum AppMsg {
     SetHistoryFilter(Option<Language>),
     SetScreen(CurrentScreen),
     Restart(bool),
+    ScrollHistory(usize),
     FocusChanged(FocusState),
 }
 
@@ -274,6 +275,7 @@ impl AppState {
                 self.go_to(screen);
             }
             AppMsg::Restart(same) => self.restart(same),
+            AppMsg::ScrollHistory(scroll) => self.history_view.scroll = scroll,
             AppMsg::FocusChanged(focus) => self.focus = focus,
         }
         let _ = save_config(&self.config);

@@ -1,5 +1,6 @@
 mod filter_bar;
 mod input;
+mod records_table;
 mod view;
 
 use ratatui::{
@@ -22,8 +23,9 @@ pub fn declare(ctx: &mut Ctx<'_>, area: Rect) {
         header,
     );
 
-    let [filter_area, _] = Layout::vertical([Constraint::Length(2), Constraint::Fill(1)])
+    let [filter_area, table_area] = Layout::vertical([Constraint::Length(2), Constraint::Fill(1)])
         .spacing(1)
         .areas(main_content);
     filter_bar::draw(ctx, filter_area, theme);
+    records_table::draw(ctx, table_area, theme);
 }

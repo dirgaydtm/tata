@@ -1,4 +1,7 @@
-use crate::data::{Language, TestRecord};
+use crate::{
+    app::AppState,
+    data::{Language, TestRecord},
+};
 
 #[derive(Default)]
 pub struct HistoryView {
@@ -15,4 +18,13 @@ pub fn available_filters(history: &[TestRecord]) -> Vec<Option<Language>> {
         }
     }
     langs
+}
+
+pub fn filtered(state: &AppState) -> impl Iterator<Item = &TestRecord> {
+    state.history.iter().filter(|record| {
+        state
+            .history_view
+            .filter
+            .is_none_or(|l| record.language == l)
+    })
 }
