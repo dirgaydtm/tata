@@ -8,7 +8,7 @@ use ratcn::Theme;
 use super::view::available_filters;
 use crate::{
     app::{AppMsg, AppState},
-    components::tabs::{Tab, Tabs},
+    ratcn::tabs::{Tab, Tabs},
     screens::Ctx,
 };
 

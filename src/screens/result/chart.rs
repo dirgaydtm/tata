@@ -6,7 +6,7 @@ use ratatui::{
 };
 use ratcn::Theme;
 
-use crate::{components::barchart::BarChartWidget, screens::Ctx};
+use crate::{ratcn::barchart::BarChartWidget, screens::Ctx};
 
 /// One bar per second, averaged into buckets when there are more seconds than room.
 fn chart_bars(samples: &[f64], fallback: f64, max_bars: usize) -> Vec<Bar<'static>> {

@@ -3,7 +3,7 @@ use ratcn::Theme;
 
 use crate::{
     app::AppMsg,
-    components::button::{Button, ButtonSize},
+    ratcn::button::{Button, ButtonSize},
     screens::{
         Ctx, CurrentScreen,
         layout::{footer_areas, hints},

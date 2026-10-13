@@ -6,7 +6,7 @@ use ratatui::{
 };
 use ratcn::Theme;
 
-use crate::{app::AppMsg, components::button::Button, data::Language, screens::Ctx};
+use crate::{app::AppMsg, data::Language, ratcn::button::Button, screens::Ctx};
 
 pub fn draw(ctx: &mut Ctx<'_>, area: Rect, theme: Theme) {
     let state = ctx.state();

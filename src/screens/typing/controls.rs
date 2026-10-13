@@ -7,8 +7,8 @@ use ratcn::{Theme, list_core::ListItem};
 
 use crate::{
     app::{AppMsg, AppState, OpenDropdown},
-    components::select::Select,
     data::{Language, SOUND_OPTIONS, SnippetLength, TestMode},
+    ratcn::select::Select,
     screens::Ctx,
 };
 

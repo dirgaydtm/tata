@@ -9,7 +9,7 @@ use ratcn::Theme;
 use super::view::filtered;
 use crate::{
     app::{AppMsg, AppState},
-    components::scroll_area::ScrollArea,
+    ratcn::scroll_area::ScrollArea,
     screens::Ctx,
     utils::format_timestamp,
 };

@@ -6,8 +6,8 @@ use ratatui::{
 
 use crate::{
     app::{AppMsg, AppState},
-    components::tabs::{Tab, Tabs},
     data::{CaretStyle, SOUND_OPTIONS, SnippetLength, TestMode, ThemeChoice},
+    ratcn::tabs::{Tab, Tabs},
     screens::Ctx,
 };
 

@@ -1,4 +1,4 @@
-// This file is managed by cargo ratcn.
+// Components below are managed by cargo ratcn.
 #![allow(dead_code)]
 
 pub mod barchart;

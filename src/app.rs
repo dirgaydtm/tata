@@ -20,12 +20,12 @@ use web_time::Instant;
 
 use crate::{
     audio::play_click,
-    components::toast::ToasterWidget,
     data::{
         CaretStyle, Language, Snippet, SnippetLength, TestMode, TestRecord, ThemeChoice,
         UserConfig, load_config, load_history, save_config, save_history,
     },
     engine::Session,
+    ratcn::toast::ToasterWidget,
     screens::{self, CurrentScreen, history::HistoryView, settings::SettingsView},
     utils::{Timer, cycle, theme_for},
 };

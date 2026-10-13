@@ -6,7 +6,7 @@ use ratatui::{
 };
 use ratcn::Theme;
 
-use crate::{components::progress::ProgressWidget, data::TestMode, screens::Ctx};
+use crate::{data::TestMode, ratcn::progress::ProgressWidget, screens::Ctx};
 
 pub fn draw(ctx: &mut Ctx<'_>, area: Rect, theme: Theme) {
     let state = ctx.state();

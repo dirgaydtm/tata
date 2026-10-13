@@ -2,7 +2,7 @@ use ratatui::layout::{Constraint, Flex, Layout, Rect};
 
 use crate::{
     app::AppMsg,
-    components::button::Button,
+    ratcn::button::Button,
     screens::{Ctx, CurrentScreen},
 };
 
