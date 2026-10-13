@@ -55,12 +55,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anpa"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d097f1722c2da82295c9e941c0dde75b4bf7a71102580c4ea63f8e5bc2d50c4e"
-
-[[package]]
 name = "approx"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -105,7 +99,7 @@ dependencies = [
  "beamterm-data",
  "beamterm-unicode",
  "bitflags 2.13.2",
- "compact_str 0.9.1",
+ "compact_str",
  "glow",
  "lru 0.16.4",
  "rustc-hash",
@@ -119,7 +113,7 @@ version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f21ff1fc630079352bae9b024f85519bf1f641cf7f326623f4c0b59f7ea834fd"
 dependencies = [
- "compact_str 0.9.1",
+ "compact_str",
  "miniz_oxide 0.9.1",
  "thiserror 2.0.20",
 ]
@@ -133,7 +127,7 @@ dependencies = [
  "beamterm-core",
  "beamterm-data",
  "bitflags 2.13.2",
- "compact_str 0.9.1",
+ "compact_str",
  "console_error_panic_hook",
  "glow",
  "js-sys",
@@ -196,29 +190,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bon"
-version = "3.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60eafe0d77c3a2fc292c1d1346c3041b33c0a108085a2afabf672b70f69dbbc9"
-dependencies = [
- "bon-macros",
-]
-
-[[package]]
-name = "bon-macros"
-version = "3.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd0f9631d8aaaee112c41985d675ef269e02acbd4f33122836af4f0c5f699ff6"
-dependencies = [
- "darling 0.24.1",
- "ident_case",
- "prettyplease 0.3.0",
- "proc-macro2",
- "quote",
- "syn 3.0.6",
-]
-
-[[package]]
 name = "bumpalo"
 version = "3.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -255,21 +226,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dec551ab6e7578819132c713a93c022a05d60159dc86e7a7050223577484c55a"
 dependencies = [
  "rustversion",
-]
-
-[[package]]
-name = "catppuccin"
-version = "2.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03a90f38ad3de46591c744d05668989eba0fdecac3d5b9f06e35f2bc0a676d12"
-dependencies = [
- "itertools 0.14.0",
- "prettyplease 0.2.37",
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
- "syn 2.0.119",
 ]
 
 [[package]]
@@ -371,19 +327,6 @@ dependencies = [
  "rustversion",
  "ryu",
  "static_assertions",
-]
-
-[[package]]
-name = "compact_str"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79fcda08c33bb58b97008b2cdada6622500e949e060f5913361763121abd2416"
-dependencies = [
- "castaway",
- "cfg-if",
- "itoa",
- "static_assertions",
- "zmij",
 ]
 
 [[package]]
@@ -1115,12 +1058,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
-name = "micromath"
-version = "2.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3c8dda44ff03a2f238717214da50f65d5a53b45cd213a7370424ffdb6fae815"
-
-[[package]]
 name = "minimal-lexical"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1419,26 +1356,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
-name = "prettyplease"
-version = "0.2.37"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b"
-dependencies = [
- "proc-macro2",
- "syn 2.0.119",
-]
-
-[[package]]
-name = "prettyplease"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bfe0f4c752e450fc2faf62654f1c134747922825d5b04ca717b8874f41a40c0"
-dependencies = [
- "proc-macro2",
- "syn 3.0.6",
-]
-
-[[package]]
 name = "proc-macro-crate"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1497,7 +1414,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cbb175c433c8e28a809d1f5773a2ae96e68c0ce40db865cbab1020bf33ae479c"
 dependencies = [
  "bitflags 2.13.2",
- "compact_str 0.9.1",
+ "compact_str",
  "critical-section",
  "hashbrown 0.17.1",
  "itertools 0.14.0",
@@ -1559,7 +1476,6 @@ dependencies = [
 name = "ratype"
 version = "0.1.0"
 dependencies = [
- "catppuccin",
  "color-eyre",
  "console_error_panic_hook",
  "crossterm",
@@ -1574,10 +1490,8 @@ dependencies = [
  "serde",
  "serde_json",
  "strum",
- "tachyonfx",
  "time",
  "tui-big-text",
- "unicode-width",
  "web-sys",
  "web-time",
 ]
@@ -1590,7 +1504,7 @@ checksum = "d53309a50b2cfb9828d1ea653b77fc6d2fe08137b05e65aa070ab87630e35b49"
 dependencies = [
  "beamterm-renderer",
  "bitvec",
- "compact_str 0.9.1",
+ "compact_str",
  "console_error_panic_hook",
  "ratatui",
  "thiserror 2.0.20",
@@ -1956,21 +1870,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "tachyonfx"
-version = "0.25.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e74555389c0a1c1c20e302994dc6eb478ab8754472b944b79a6558d44f33be3"
-dependencies = [
- "anpa",
- "bon",
- "compact_str 0.10.0",
- "micromath",
- "ratatui-core",
- "thiserror 2.0.20",
- "unicode-width",
 ]
 
 [[package]]
